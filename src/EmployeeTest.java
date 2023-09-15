@@ -57,12 +57,12 @@ public class EmployeeTest {
         employeeBook.printAll();
         String department = "2";
         System.out.println();
-        System.out.println("Траты за месяц в отделе " + department + " составляют - " + employeeBook.salarySum(department) + "\n");
-        System.out.println("Сотрудник с минимальной зарплатой в отделе " + department + " - " + (employeeBook.minSalary(department) == null ? "нет сотрудников" : employeeBook.minSalary(department)) + "\n");
-        System.out.println("Сотрудник с максимальной зарплатой в отделе " + department + " - " + (employeeBook.maxSalary(department) == null ? "нет сотрудников" : employeeBook.maxSalary(department)) + "\n");
-        System.out.println("Среднее значение зарплат в отделе " + department + " - " + employeeBook.averageValue(department) + "\n");
+        System.out.println("Траты за месяц в отделе " + department + " составляют - " + employeeBook.salarySumByDepartment(department) + "\n");
+        System.out.println("Сотрудник с минимальной зарплатой в отделе " + department + " - " + (employeeBook.minSalaryByDepartment(department) == null ? "нет сотрудников" : employeeBook.minSalaryByDepartment(department)) + "\n");
+        System.out.println("Сотрудник с максимальной зарплатой в отделе " + department + " - " + (employeeBook.maxSalaryByDepartment(department) == null ? "нет сотрудников" : employeeBook.maxSalaryByDepartment(department)) + "\n");
+        System.out.println("Среднее значение зарплат в отделе " + department + " - " + employeeBook.averageValueByDepartment(department) + "\n");
         System.out.println("Провести нидексацию на 5% в отделе " + department + "\n");
-        employeeBook.salaryIndexing(5.0, department);
+        employeeBook.salaryIndexingByDepartment(5.0, department);
         System.out.println("Список сотрудников в отделе " + department);
         employeeBook.printDepartment(department);
         System.out.println();

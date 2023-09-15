@@ -43,7 +43,7 @@ public class EmployeeBook {
     /**
      * Траты за месяц по отделу
      */
-    public double salarySum(String department) {
+    public double salarySumByDepartment(String department) {
         return salarySum(filterByDepartment(department));
     }
 
@@ -54,7 +54,7 @@ public class EmployeeBook {
         return maxSalary(employees);
     }
 
-    public Employee maxSalary(Employee[] employees) {
+    private Employee maxSalary(Employee[] employees) {
         if (employees.length == 0) return null;
         Employee max = null;
         for (Employee employee : employees) {
@@ -72,7 +72,7 @@ public class EmployeeBook {
     /**
      * Сотрудник с максимальной зарплатой по номеру отдела
      */
-    public Employee maxSalary(String department) {
+    public Employee maxSalaryByDepartment(String department) {
         return maxSalary(filterByDepartment(department));
     }
 
@@ -83,7 +83,7 @@ public class EmployeeBook {
         return minSalary(employees);
     }
 
-    public Employee minSalary(Employee[] employees) {
+    private Employee minSalary(Employee[] employees) {
         if (employees.length == 0) return null;
         Employee min = null;
         for (Employee employee : employees) {
@@ -101,7 +101,7 @@ public class EmployeeBook {
     /**
      * Сотрудник с минимальной зарплатой по номеру отдела
      */
-    public Employee minSalary(String department) {
+    public Employee minSalaryByDepartment(String department) {
         return minSalary(filterByDepartment(department));
     }
 
@@ -120,7 +120,7 @@ public class EmployeeBook {
     /**
      * Среднее значение зарплат по номеру отдела
      */
-    public double averageValue(String department) {
+    public double averageValueByDepartment(String department) {
         return averageValue(filterByDepartment(department));
     }
 
@@ -156,7 +156,7 @@ public class EmployeeBook {
     /**
      * Индексирование зарплаты отдела
      */
-    public void salaryIndexing(double percent, String department) {
+    public void salaryIndexingByDepartment(double percent, String department) {
         for (Employee employee : employees) {
             if (employee != null && employee.getDepartment().equals(department)) {
                 salaryIndexing(employee, percent);
@@ -341,19 +341,22 @@ public class EmployeeBook {
         int size = 0;
         for (Employee employee : employees) {
             if (employee != null) {
-                boolean notPresent = true;
-                for (int i = 0; i < result.length && result[i] != null; i++) {
-                    if (result[i].equals(employee.getDepartment())) {
-                        notPresent = false;
-                        break;
-                    }
-                }
-                if (notPresent) {
-                    result[size++] = employee.getDepartment();
+                String department = employee.getDepartment();
+                if (containsDepartment(result, department)) {
+                    result[size++] = department;
                 }
             }
         }
         return Arrays.copyOf(result, size);
+    }
+
+    private boolean containsDepartment(String[] arr, String department){
+        for (int i = 0; i < arr.length && arr[i] != null; i++) {
+            if (arr[i].equals(department)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
