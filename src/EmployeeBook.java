@@ -55,18 +55,7 @@ public class EmployeeBook {
     }
 
     private Employee maxSalary(Employee[] employees) {
-        if (employees.length == 0) return null;
-        Employee max = null;
-        for (Employee employee : employees) {
-            if (employee != null) {
-                if (max == null) {
-                    max = employee;
-                } else if (max.getSalary() < employee.getSalary()) {
-                    max = employee;
-                }
-            }
-        }
-        return max;
+        return extremumSalary(employees, false);
     }
 
     /**
@@ -84,18 +73,7 @@ public class EmployeeBook {
     }
 
     private Employee minSalary(Employee[] employees) {
-        if (employees.length == 0) return null;
-        Employee min = null;
-        for (Employee employee : employees) {
-            if (employee != null) {
-                if (min == null) {
-                    min = employee;
-                } else if (min.getSalary() > employee.getSalary()) {
-                    min = employee;
-                }
-            }
-        }
-        return min;
+        return extremumSalary(employees, true);
     }
 
     /**
@@ -103,6 +81,25 @@ public class EmployeeBook {
      */
     public Employee minSalaryByDepartment(String department) {
         return minSalary(filterByDepartment(department));
+    }
+
+    private Employee extremumSalary(Employee[] employees, boolean isMin) {
+        if (employees.length == 0) return null;
+        Employee extremum = null;
+        for (Employee employee : employees) {
+            if (employee != null) {
+                if (extremum == null) {
+                    extremum = employee;
+                } else if (isMin) {
+                    if(extremum.getSalary() > employee.getSalary()){
+                        extremum = employee;
+                    }
+                } else if(extremum.getSalary() < employee.getSalary()) {
+                    extremum = employee;
+                }
+            }
+        }
+        return extremum;
     }
 
     /**
