@@ -1,22 +1,25 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class EmployeeTest {
     public static void main(String[] args) {
 
-        Employee[] employees = new Employee[]{
-                new Employee("Малышева", "Амалия", "Михайловна", "2", 83166.43),
-                new Employee("Козловский", "Денис", "Дмитриевич", "1", 60250.60),
-                new Employee("Соловьева", "Серафима", "Тимофеевна", "3", 59343.29),
-                new Employee("Макарова", "Дарья", "Тимофеевна", "1", 82042.89),
-                new Employee("Лебедева", "Таисия", "Макаровна", "5", 72881.88),
-                new Employee("Романов", "Артём", "Егорович", "2", 62761.97),
-                new Employee("Широков", "Павел", "Тимофеевич", "4", 97159.11),
-                new Employee("Кудрявцев", "Лев", "Егорович", "2", 89845.70),
-                new Employee("Белякова", "Антонина", "Дмитриевна", "5", 79209.12),
-                new Employee("Филиппова", "Алиса", "Александровна", "1", 87333.51)
-        };
+        List<Employee> employees = new ArrayList<>(
+                List.of(new Employee("Малышева", "Амалия", "Михайловна", "2", 83166.43),
+                        new Employee("Козловский", "Денис", "Дмитриевич", "1", 60250.60),
+                        new Employee("Соловьева", "Серафима", "Тимофеевна", "3", 59343.29),
+                        new Employee("Макарова", "Дарья", "Тимофеевна", "1", 82042.89),
+                        new Employee("Лебедева", "Таисия", "Макаровна", "5", 72881.88),
+                        new Employee("Романов", "Артём", "Егорович", "2", 62761.97),
+                        new Employee("Широков", "Павел", "Тимофеевич", "4", 97159.11),
+                        new Employee("Кудрявцев", "Лев", "Егорович", "2", 89845.70),
+                        new Employee("Белякова", "Антонина", "Дмитриевна", "5", 79209.12),
+                        new Employee("Филиппова", "Алиса", "Александровна", "1", 87333.51))
+        );
         EmployeeBook employeeBook = new EmployeeBook(employees);
 
 
-        Employee[] empty = new Employee[]{};
+        List<Employee> empty = null;
         EmployeeBook employeeBookEmpty = new EmployeeBook(empty);
 
         System.out.println("\n *** Тест все ОК (Базовая сложность) *** \n");

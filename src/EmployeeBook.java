@@ -1,17 +1,19 @@
-import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class EmployeeBook {
-    private Employee[] employees;
+    private List<Employee> employees;
 
-    public EmployeeBook(Employee[] employees) {
+    public EmployeeBook(List<Employee> employees) {
         this.employees = employees;
     }
 
     /**
      * Вывод всего списка в консоль
      */
-    public void printAll(Employee[] employees) {
+    public void printAll(List<Employee> employees) {
+        if (employees == null) return;
         for (Employee employee : employees) {
             if (employee != null) {
                 System.out.println(employee);
@@ -30,7 +32,8 @@ public class EmployeeBook {
         return salarySum(employees);
     }
 
-    public double salarySum(Employee[] employees) {
+    public double salarySum(List<Employee> employees) {
+        if (employees == null) return 0;
         double sum = 0;
         for (Employee employee : employees) {
             if (employee != null) {
@@ -54,7 +57,7 @@ public class EmployeeBook {
         return maxSalary(employees);
     }
 
-    private Employee maxSalary(Employee[] employees) {
+    private Employee maxSalary(List<Employee> employees) {
         return extremumSalary(employees, false);
     }
 
@@ -72,7 +75,7 @@ public class EmployeeBook {
         return minSalary(employees);
     }
 
-    private Employee minSalary(Employee[] employees) {
+    private Employee minSalary(List<Employee> employees) {
         return extremumSalary(employees, true);
     }
 
@@ -83,18 +86,18 @@ public class EmployeeBook {
         return minSalary(filterByDepartment(department));
     }
 
-    private Employee extremumSalary(Employee[] employees, boolean isMin) {
-        if (employees.length == 0) return null;
+    private Employee extremumSalary(List<Employee> employees, boolean isMin) {
+        if (employees == null) return null;
         Employee extremum = null;
         for (Employee employee : employees) {
             if (employee != null) {
                 if (extremum == null) {
                     extremum = employee;
                 } else if (isMin) {
-                    if(extremum.getSalary() > employee.getSalary()){
+                    if (extremum.getSalary() > employee.getSalary()) {
                         extremum = employee;
                     }
-                } else if(extremum.getSalary() < employee.getSalary()) {
+                } else if (extremum.getSalary() < employee.getSalary()) {
                     extremum = employee;
                 }
             }
@@ -109,9 +112,9 @@ public class EmployeeBook {
         return averageValue(employees);
     }
 
-    public double averageValue(Employee[] employees) {
-        if (employees.length == 0) return 0;
-        return salarySum(employees) / employees.length;
+    public double averageValue(List<Employee> employees) {
+        if (employees == null || employees.size() == 0) return 0;
+        return salarySum(employees) / employees.size();
     }
 
     /**
@@ -125,6 +128,7 @@ public class EmployeeBook {
      * Список Фио
      */
     public String getAllFullName() {
+        if (employees == null) return "";
         StringBuilder fio = new StringBuilder();
         for (Employee employee : employees) {
             if (employee != null) {
@@ -138,6 +142,7 @@ public class EmployeeBook {
      * Индексирование зарплаты
      */
     public void salaryIndexing(double percent) {
+        if (employees == null) return;
         for (Employee employee : employees) {
             if (employee != null) {
                 salaryIndexing(employee, percent);
@@ -154,6 +159,7 @@ public class EmployeeBook {
      * Индексирование зарплаты отдела
      */
     public void salaryIndexingByDepartment(double percent, String department) {
+        if (employees == null) return;
         for (Employee employee : employees) {
             if (employee != null && employee.getDepartment().equals(department)) {
                 salaryIndexing(employee, percent);
@@ -164,45 +170,46 @@ public class EmployeeBook {
     /**
      * Фильтр по отделу
      */
-    public Employee[] filterByDepartment(String department) {
-        if (employees.length == 0) return employees;
-        Employee[] result = new Employee[employees.length];
-        int size = 0;
-        for (Employee employee : employees) {
-            if (employee != null && employee.getDepartment().equals(department)) {
-                result[size++] = employee;
-            }
-        }
-        return Arrays.copyOf(result, size);
+    public List<Employee> filterByDepartment(String department) {
+        if (employees == null) return null;
+        return employees.stream().filter(
+                employee -> employee.getDepartment().equals(department)
+        ).toList();
     }
 
     /**
      * Печать отдела
      */
     public void printDepartment(String department) {
-        Employee[] departmentEmployees = filterByDepartment(department);
-        if (departmentEmployees.length == 0) {
-            System.out.println("В отделе " + department + " нет сотрудников!");
+        if (employees == null) return;
+        List<Employee> departmentEmployees = filterByDepartment(department);
+        if (departmentEmployees.size() != 0) {
+            printEmployeeInfoWithoutDepartment(departmentEmployees);
         }
-        printEmployeeWithoutDepartment(departmentEmployees);
     }
 
     public void printAllDepartments() {
-        String[] departments = getDepartments();
-        for (String department : departments) {
-            System.out.println("Список сотрудников в отделе " + department);
-            printDepartment(department);
-        }
+        var map = employees.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment));
+        map.forEach((department, employee) -> {
+                    System.out.println("Список сотрудников в отделе " + department);
+                    if (employee.size() == 0) {
+                        System.out.println("В отделе " + department + " нет сотрудников!");
+                    } else {
+                        printAll(employee);
+                    }
+                }
+        );
     }
 
     /**
      * Печать информации о сотруднике без отдела
      */
-    public void printEmployeeWithoutDepartment() {
-        printEmployeeWithoutDepartment(employees);
+    public void printEmployeeInfoWithoutDepartment() {
+        printEmployeeInfoWithoutDepartment(employees);
     }
 
-    private void printEmployeeWithoutDepartment(Employee[] employees) {
+    private void printEmployeeInfoWithoutDepartment(List<Employee> employees) {
         for (Employee employee : employees) {
             if (employee != null) {
                 System.out.println(employee.toString().replaceAll("\tОтдел.*?\n", ""));
@@ -213,42 +220,28 @@ public class EmployeeBook {
     /**
      * Все сотрудники с зарплатой меньше checkSalary
      */
-    public Employee[] filterBySalaryLessThan(double checkSalary) {
-        if (employees.length == 0) return employees;
-        Employee[] result = new Employee[employees.length];
-        int size = 0;
-        for (Employee employee : employees) {
-            if (employee != null && employee.getSalary() < checkSalary) {
-                result[size++] = employee;
-            }
-        }
-        return Arrays.copyOf(result, size);
+    public List<Employee> filterBySalaryLessThan(double checkSalary) {
+        if (employees == null) return null;
+        return employees.stream().filter(employee -> employee.getSalary() < checkSalary).toList();
     }
 
     /**
      * Все сотрудники с зарплатой больше checkSalary
      */
-    public Employee[] filterBySalaryMoreThan(double checkSalary) {
-        if (employees.length == 0) return employees;
-        Employee[] result = new Employee[employees.length];
-        int size = 0;
-        for (Employee employee : employees) {
-            if (employee != null && employee.getSalary() > checkSalary) {
-                result[size++] = employee;
-            }
-        }
-        return Arrays.copyOf(result, size);
+    public List<Employee> filterBySalaryMoreThan(double checkSalary) {
+        if (employees == null) return null;
+        return employees.stream().filter(employee -> employee.getSalary() > checkSalary).toList();
     }
 
     /**
      * Удалить сотрудника
      */
     public void removeEmployee(int id) {
-        employees[getIdEmployees(id)] = null;
+        employees.remove(id);
     }
 
     public void removeEmployee(String surname, String name, String patronymic) {
-        employees[getIdEmployees(surname, name, patronymic)] = null;
+        employees.remove(getEmployee(surname, name, patronymic));
     }
 
     public void removeEmployee(Employee employee) {
@@ -259,19 +252,7 @@ public class EmployeeBook {
      * Добавить сотрудника
      */
     public void addEmployee(Employee employee) {
-        if (employees.length == 0) {
-            employees = new Employee[]{employee};
-            return;
-        }
-        int len = employees.length;
-        for (int i = 0; i < len; i++) {
-            if (employees[i] == null) {
-                employees[i] = employee;
-                return;
-            }
-        }
-        employees = Arrays.copyOf(employees, len + len / 2 + 1);
-        employees[len] = employee;
+        employees.add(employee);
     }
 
     /**
@@ -282,11 +263,11 @@ public class EmployeeBook {
     }
 
     public void updateSalary(String surname, String name, String patronymic, double salary) {
-        employees[getIdEmployees(surname, name, patronymic)].setSalary(salary);
+        getEmployee(surname, name, patronymic).setSalary(salary);
     }
 
     public void updateSalary(int id, double salary) {
-        employees[getIdEmployees(id)].setSalary(salary);
+        employees.get(id).setSalary(salary);
     }
 
     /**
@@ -297,63 +278,27 @@ public class EmployeeBook {
     }
 
     public void updateDepartment(String surname, String name, String patronymic, String department) {
-        employees[getIdEmployees(surname, name, patronymic)].setDepartment(department);
+        getEmployee(surname, name, patronymic).setDepartment(department);
     }
 
     public void updateDepartment(int id, String department) {
-        employees[getIdEmployees(id)].setDepartment(department);
+        employees.get(id).setDepartment(department);
     }
 
     /**
      * Методы поиска id Employees[]
      */
-    private int getIdEmployees(String surname, String name, String patronymic) {
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] != null &&
-                    surname.equals(employees[i].getSurname()) &&
-                    name.equals(employees[i].getName()) &&
-                    patronymic.equals(employees[i].getPatronymic())
-            ) {
-                return i;
-            }
-        }
-        throw new NoSuchElementException();
-    }
-
-    private int getIdEmployees(int id) {
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] != null && employees[i].getId() == id) {
-                return i;
-            }
-        }
-        throw new NoSuchElementException();
-    }
-
-    /**
-     * Получить массив всех отделов
-     */
-    private String[] getDepartments() {
-        if (employees.length == 0) return new String[]{};
-        String[] result = new String[employees.length];
-        int size = 0;
+    private Employee getEmployee(String surname, String name, String patronymic) {
         for (Employee employee : employees) {
-            if (employee != null) {
-                String department = employee.getDepartment();
-                if (containsDepartment(result, department)) {
-                    result[size++] = department;
-                }
+            if (
+                    surname.equals(employee.getSurname()) &&
+                            name.equals(employee.getName()) &&
+                            patronymic.equals(employee.getPatronymic())
+            ) {
+                return employee;
             }
         }
-        return Arrays.copyOf(result, size);
-    }
-
-    private boolean containsDepartment(String[] arr, String department){
-        for (int i = 0; i < arr.length && arr[i] != null; i++) {
-            if (arr[i].equals(department)) {
-                return true;
-            }
-        }
-        return false;
+        throw new NoSuchElementException();
     }
 
 }
